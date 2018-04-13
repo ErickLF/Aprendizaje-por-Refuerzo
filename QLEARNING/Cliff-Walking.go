@@ -99,7 +99,8 @@ func Qlearning(problema *MDP, max_ep int){
       accion := q.epsilon_greedy(estado)
       r,estado_sig := q.tomarAccion(problema,estado,accion)
       QSA := q.getQ(estado,accion)
-      QSA_sig := q.getQ(estado_sig,accion)
+      maxAccion := q.maxAccion(estado)
+      QSA_sig := q.getQ(estado_sig,maxAccion)//elegimos la maxima accion por si el egreedy toma una accion al azar
       QSA = QSA + q.alfa*(r+q.gamma*QSA_sig - QSA)
       fmt.Println(estado,"-->",q.acciones[accion],"---",estado_sig)
       q.setQ(estado,accion,QSA)
@@ -130,7 +131,18 @@ func (q *QL) epsilon_greedy(estado []int) (int){//regresa una accion
   }
   return accion
 }
-
+func(q *QL) maxAccion(estado []int) int{
+  i := q.getIdx(estado)
+  max := q.Q[i][0] //nos posicionamos en ese estado y agarramos su primer valor que da esa accion
+  accion := 0
+  for j := 0; j < len(q.acciones); j++ {//buscamos la accion con mayor valor
+    if max < q.Q[i][j] {
+      max = q.Q[i][j]
+      accion = j //seleccionamos la mejor accion
+    }
+  }
+  return accion
+}
 
 type MDP struct{
   acciones map[int]string
