@@ -88,9 +88,7 @@ func tomarAccion(p *MDP, estado *Estado, accion int) (int,Estado){
   return -1,s
 }
 func SarsaSemiGradiente(p *MDP){
-  rand.Seed(time.Now().Unix())
-
-	estado := Estado{}
+  estado := Estado{}
   estado.posicionRandom()
   accion := p.accionRandom()
 
@@ -100,28 +98,9 @@ func SarsaSemiGradiente(p *MDP){
     for estado.posicion < p.pos_max {
       paso++
       r,nuevoEstado := tomarAccion(p,estado,accion)
+      //Falta obtener la mejor accion con el tile coding
 	   }
   }
-}
-
-func getActiveTiles(action string) []int {
-	//fmt.Println("Hello: ", s.position, s.velocity, s.posScale)
-	_pos := math.Floor(s.position * s.posScale * float64(s.v.Tilings))
-	//fmt.Println("macho")
-	_vel := math.Floor(s.velocity * s.velScale * float64(s.v.Tilings))
-	tiles := make([]int, 0)
-
-	for tile := 0; tile < s.v.Tilings; tile++ {
-
-		div := math.Floor(((_pos + float64(tile)) / float64(s.v.Tilings))) //
-
-		div2 := math.Floor(((_vel + 3*float64(tile)) / float64(s.v.Tilings)))
-
-		key.WriteString(action)
-
-		tiles = append(tiles, s.Idx(key.String()))
-	}
-	return tiles
 }
 
 func main(){
