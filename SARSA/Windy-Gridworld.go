@@ -33,6 +33,7 @@ type SARSA struct {
   renglones int
   columnas int
 }
+
 func (s *SARSA) Inicializar(windy *MDP_WindyGrid, epsilon float64,gamma float64,alfa float64 ){
   s.epsilon = epsilon
   s.gamma = gamma
@@ -53,17 +54,27 @@ type MDP_WindyGrid struct {
   estado_ini []int
   estado_fin []int
   //dimensiones del tablero
-
 }
-func (problema *MDP_WindyGrid) inicializar() {
-    problema.acciones =  map[int]string{0 : "Aarriba" ,1 : "Abajo", 2 : "Izquierda", 3 :"Derecha"}
-    problema.viento = []int{0, 0, 0, 1, 1, 1, 2, 2, 1, 0}
+
+func (problema *MDP_WindyGrid) inicializar(acciones int, estocastico bool) {
+    if acciones == 8{
+      problema.acciones =  map[int]string{0 : "Aarriba" ,1 : "Abajo", 2 : "Izquierda", 3 :"Derecha",
+      4:"Ariba Izquierda",5:"Arriba Derecha", 6:"Abajo Izquierda", 7:"Abajo Derecha"}
+    }else{
+      problema.acciones =  map[int]string{0 : "Aarriba" ,1 : "Abajo", 2 : "Izquierda", 3 :"Derecha"}
+    }
+    if estocastico{
+      problema.viento = []int{0, 0, 0, rand.Intn(3), rand.Intn(3), rand.Intn(3), rand.Intn(4), rand.Intn(4), rand.Intn(3), 0}
+    }else{
+      problema.viento = []int{0, 0, 0, 1, 1, 1, 2, 2, 1, 0}
+    }
     //iniciamos las coordenadas de el estado inicial y final
     problema.estado_ini =  []int{0,3}
     problema.estado_fin = []int{7,3}
     //dimensiones del tablero
 
 }
+
 
 func (s *SARSA) getIdx(estado []int) int {
 	return estado[1]*s.columnas + estado[0]
@@ -122,6 +133,34 @@ func (s *SARSA) tomarAccion(st []int, a int, viento []int, sf []int) (float64,[]
     if st[0] != s.columnas-1{
       estado[0] = st[0] + 1
     }
+  case 4://Arriba Izquierda
+    if st[1] > 0 {
+      estado[1] = st[1] - 1
+    }
+    if st[0] > 0{
+      estado[0] = st[0] - 1
+    }
+  case 5://Arriba Derecha
+    if st[1] > 0 {
+      estado[1] = st[1] - 1
+    }
+    if st[0] != s.columnas-1{
+      estado[0] = st[0] + 1
+    }
+  case 6:
+    if st[1] != s.renglones-1 {
+      estado[1] = st[1] + 1
+    }
+    if st[0] > 0{
+      estado[0] = st[0] - 1
+    }
+  case 7:
+    if st[1] != s.renglones-1 {
+      estado[1] = st[1] + 1
+    }
+    if st[0] != s.columnas-1{
+      estado[0] = st[0] + 1
+    }
   }
   //Aqui funciona si la suma del viento cae exactamente en el estado final, mas no si pasa
   estado[1] -= viento[estado[0]]
@@ -137,6 +176,7 @@ func (s *SARSA) tomarAccion(st []int, a int, viento []int, sf []int) (float64,[]
 	return -1.0, estado
 
 }
+
 func Sarsa(problema *MDP_WindyGrid, max_ep int){
   S := SARSA{}
   //Inicializamos el estado inicial
@@ -159,12 +199,21 @@ func Sarsa(problema *MDP_WindyGrid, max_ep int){
       accion = accion_sig
     }
   }
-  fmt.Println(S.Q)
+  //fmt.Println(S.Q)
 }
 
 func main() {
   fmt.Println("Problema Windy Grid World")
   problema := MDP_WindyGrid{}
-  problema.inicializar()
-  Sarsa(&problema,1000)
+  problema.inicializar(0,false)
+  Sarsa(&problema,100)
+  //
+  problema2 := MDP_WindyGrid{}
+  problema2.inicializar(8,false)
+  Sarsa(&problema2,100)
+
+  problema3 := MDP_WindyGrid{}
+  problema3.inicializar(0,true)
+  Sarsa(&problema3,100)
+
 }
