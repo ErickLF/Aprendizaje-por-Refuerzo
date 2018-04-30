@@ -27,6 +27,9 @@ package main
 import (
   "fmt"
   "math"
+  "net/http"
+	"github.com/wcharczuk/go-chart"
+
 )
 const (
   meta = 100
@@ -48,20 +51,59 @@ func (problema *MDP_Jugador) r(s int) int {
   return 0
 }
 
-func iteracion_valor(problema *MDP_Jugador) {
+func drawChart(res http.ResponseWriter, req *http.Request) {
+//Funcion tomada de https://github.com/Franko1307/Reinforcement-Learning-Golang/blob/master/gambler/gambler.go
+//esta chida
+  V,pi := iteracion_valor(problema)
+
+	xVal := make([]float64, len(pi))
+
+	for i := 0; i < len(pi); i++ {
+		xVal[i] = float64(i)
+	}
+
+	graph := chart.Chart{
+		XAxis: chart.XAxis{
+			Style: chart.Style{
+				Show: true,
+			},
+		},
+		YAxis: chart.YAxis{
+			Style: chart.Style{
+				Show: true,
+			},
+		},
+		Series: []chart.Series{
+			chart.ContinuousSeries{
+				Style: chart.Style{
+					Show:        true,
+					StrokeColor: chart.GetDefaultColor(4).WithAlpha(64),
+					FillColor:   chart.GetDefaultColor(4).WithAlpha(64),
+				},
+				XValues: xVal,
+				YValues: V,
+			},
+		},
+	}
+
+	res.Header().Set("Content-Type", "image/png")
+	graph.Render(chart.PNG, res)
+}
+
+func iteracion_valor(problema *MDP_Jugador) ([]float64,[]float64){
   V := make([]float64, meta+1)   //inicializamos los valores de V en 0
   pi := make([]float64, meta+1) //inicializamos los valores de la politica en
   delta := 1.0
   for delta > theta{
       delta = 0
-      for s:= 1; s < meta; s++{
+      for s:= 1; s <meta; s++{
         v := V[s] //valor anterior
         bellmant(problema,s,V,pi)
         diff := math.Abs(v-V[s])
         delta = math.Max(delta,diff)
       }
   }
-  fmt.Println(pi)
+  return V,pi
 }
 
 func bellmant(problema *MDP_Jugador, s int, V []float64, pi []float64){
@@ -80,6 +122,9 @@ func bellmant(problema *MDP_Jugador, s int, V []float64, pi []float64){
 
 }
 func main() {
-  iteracion_valor(problema)
+  //V,pi := iteracion_valor(problema)
   fmt.Println("Problema Gambler's")
+  http.HandleFunc("/", drawChart)
+  http.ListenAndServe(":8080", nil)
+
 }
