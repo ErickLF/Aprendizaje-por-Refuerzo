@@ -5,3 +5,10 @@ En este repositorio se llevaran a cabo varios ejemplos que utilizan los diferent
 ![Solucion](images/Jack.png)
 
 Solución despues de 4 episodios.
+
+# Graficas para el problema Gambler's (El apostador)
+![Solucion](images/Gambler.png)
+con una probabilidad de .45.
+
+![Solucion](images/Ga25.png)
+con una probabilidad de .25.
