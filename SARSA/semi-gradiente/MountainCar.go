@@ -32,8 +32,11 @@ func(this *Mountain) init(){
 func (this *Mountain) reset(){
     this.gameOver = false
     rand.Seed(time.Now().UnixNano())
-    this.posicion = (rand.Float64() * this.posicion_min) + this.posicion_max
-    this.velocidad =(rand.Float64() * this.velocidad_min) + this.velocidad_max
+    //this.posicion = (rand.Float64() * this.posicion_min) + this.posicion_max
+    //this.velocidad =(rand.Float64() * this.velocidad_min) + this.velocidad_max
+    this.posicion = 0.85
+    this.posicion = 0.2
+
 }
 func (this *Mountain) paso(accion int) float64{
   this.velocidad = this.velocidad + 0.001 * float64(accion) - 0.0025 * math.Cos(3*this.posicion)
@@ -276,7 +279,7 @@ func Play(car *Mountain,num_episodes int, alfa float64, gamma float64, epsilon f
 
 func main() {
   agentes := 20
-  num_eps:= 100
+  num_eps:= 150
   //recompensas := make([]float64,num_eps)
   for i :=0; i < agentes; i++{
     car := Mountain{}
