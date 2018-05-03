@@ -84,12 +84,6 @@ func (estado *Estado)minAccion(problema *MDP_Jack) int{
 		moviendo := math.Min(float64(carDisponiblesDeB), float64(carDisponiblesParaA));
 		return -int(math.Min(moviendo, float64(problema.maxMov)));
 }
-func (s *Estado) imprimirAccion(){
-  fmt.Println(" ",s.accion," ")
-}
-func (s *Estado) imprimirV(){
-  fmt.Println(" ",s.V," ")
-}
 
 
 type MDP_Jack struct {
@@ -120,7 +114,7 @@ type MDP_Jack struct {
 
 
 func (problema *MDP_Jack) Iniciar(){
-    problema.maxCar = 5
+    problema.maxCar = 20
     problema.maxMov = 5
     problema.recompensa = 10
     problema.lambdaS_A = 3.0
@@ -257,7 +251,7 @@ func (problema *MDP_Jack) iteracionPolitica(maxE int){
 func(problema *MDP_Jack) ImprimirA(){
   for i:= 0; i < problema.maxCar + 1; i++ {
     for j:= 0; j < problema.maxCar + 1; j++ {
-      fmt.Println(problema.estado[i][j].accion)
+      fmt.Print(math.Abs(float64(problema.estado[i][j].accion)), " ")
     }
     fmt.Println("")
   }
@@ -266,7 +260,7 @@ func(problema *MDP_Jack) ImprimirA(){
 func(problema *MDP_Jack) ImprimirV(){
   for i:= 0; i < problema.maxCar + 1; i++ {
     for j:= 0; j < problema.maxCar + 1; j++ {
-      fmt.Println(problema.estado[i][j].V)
+      fmt.Print(problema.estado[i][j].V, " ")
     }
     fmt.Println("")
   }
